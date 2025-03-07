@@ -5,31 +5,46 @@ ARG RUST_VERSION=1.85.0
 FROM rust:${RUST_VERSION}-slim-bookworm AS builder
 
 # Set working directory
-WORKDIR /usr/local/src/boilerplate
+WORKDIR /usr/src/boilerplate
 
-# Copy files
+# Install dependencies for building
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    binutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the source code
 COPY . .
 
 # Fetch dependencies
 RUN cargo fetch --locked
 
 # Build the application
-RUN cargo build --release
+RUN cargo build --release --locked && \
+    strip target/release/boilerplate
 
-# Stage 2: Final Image
+# Stage 2: Runtime
 FROM debian:bookworm-slim AS runtime
 
-# Copy compiled binary from builder
-COPY --from=builder --chown=root:root /usr/local/src/boilerplate/target/release/boilerplate /usr/local/bin/boilerplate
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates wget \
+    && rm -rf /var/lib/apt/lists/*
 
-# Change the binary permissions
-RUN chmod 755 /usr/local/bin/boilerplate
+# Create non-root user and group
+RUN groupadd --system boilerplate && useradd --no-log-init --system -g boilerplate boilerplate
 
-# Add non-root user and group
-RUN groupadd boilerplate
-RUN useradd -m -g boilerplate boilerplate
+# Copy the compiled binary
+COPY --from=builder --chown=boilerplate:boilerplate /usr/src/boilerplate/target/release/boilerplate /usr/local/bin/boilerplate
+
+# Set permissions
 USER boilerplate
 
-# Run the application
-ENTRYPOINT [ "/usr/local/bin/boilerplate" ]
-CMD [ "" ]
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/boilerplate"]
+
+# Expose port
+EXPOSE 3000
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget --quiet --spider http://localhost:3000/health || exit 1
