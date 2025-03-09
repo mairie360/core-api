@@ -1,3 +1,5 @@
+pub mod postgres;
+
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 
 #[get("/health")]
@@ -23,6 +25,13 @@ async fn main() -> std::io::Result<()> {
         Ok(port) => port,
         Err(_) => 3000,
     };
+
+    let postgres_url = match std::env::var("POSTGRES_URL") {
+        Ok(url) => url,
+        Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "POSTGRES_URL is not set")),
+    };
+
+    let _postgres = postgres::Postgres::new(&postgres_url);
 
     let server = HttpServer::new(|| {
         App::new()
