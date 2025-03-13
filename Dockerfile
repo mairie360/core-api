@@ -42,3 +42,6 @@ USER boilerplate
 # Set entrypoint
 ENTRYPOINT ["/usr/local/bin/boilerplate"]
 CMD []
+
+# Expose the port
+EXPOSE 3000
