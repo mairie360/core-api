@@ -291,7 +291,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "boilerplate"
+name = "boilerplate-api"
 version = "0.1.0"
 dependencies = [
  "actix-web",

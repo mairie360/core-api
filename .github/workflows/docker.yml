@@ -19,6 +19,6 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Build Docker image
         run: |
-          docker build . --file Dockerfile --tag ghcr.io/${{ github.repository_owner }}/boilerplate:latest
+          docker build . --file Dockerfile --tag ghcr.io/${{ github.repository_owner }}/boilerplate-api:latest
       - name: Push Docker image
-        run: docker push ghcr.io/${{ github.repository_owner }}/boilerplate:latest
+        run: docker push ghcr.io/${{ github.repository_owner }}/boilerplate-api:latest

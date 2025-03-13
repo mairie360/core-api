@@ -5,7 +5,7 @@ ARG RUST_VERSION=1.85.0
 FROM rust:${RUST_VERSION}-slim-bookworm AS builder
 
 # Set working directory
-WORKDIR /usr/src/boilerplate
+WORKDIR /usr/src/boilerplate-api
 
 # Install dependencies for building
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,7 +20,7 @@ RUN cargo fetch --locked
 
 # Build the application
 RUN cargo build --release --locked && \
-    strip target/release/boilerplate
+    strip target/release/boilerplate-api
 
 # Stage 2: Runtime
 FROM debian:bookworm-slim AS runtime
@@ -31,16 +31,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user and group
-RUN groupadd --system boilerplate && useradd --no-log-init --system -g boilerplate boilerplate
+RUN groupadd --system boilerplate-api && useradd --no-log-init --system -g boilerplate-api boilerplate-api
 
 # Copy the compiled binary
-COPY --from=builder --chown=boilerplate:boilerplate /usr/src/boilerplate/target/release/boilerplate /usr/local/bin/boilerplate
+COPY --from=builder --chown=boilerplate-api:boilerplate-api /usr/src/boilerplate-api/target/release/boilerplate-api /usr/local/bin/boilerplate-api
 
 # Set permissions
-USER boilerplate
+USER boilerplate-api
 
 # Set entrypoint
-ENTRYPOINT ["/usr/local/bin/boilerplate"]
+ENTRYPOINT ["/usr/local/bin/boilerplate-api"]
 CMD []
 
 # Expose the port
