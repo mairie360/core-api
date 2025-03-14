@@ -291,16 +291,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "boilerplate-api"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "diesel",
- "r2d2",
- "r2d2_redis",
-]
-
-[[package]]
 name = "brotli"
 version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -384,6 +374,16 @@ dependencies = [
  "percent-encoding",
  "time",
  "version_check",
+]
+
+[[package]]
+name = "core-api"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "diesel",
+ "r2d2",
+ "r2d2_redis",
 ]
 
 [[package]]
