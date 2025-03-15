@@ -14,8 +14,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydatabase
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -30,8 +30,8 @@ services:
     image: redis:7.4.2-bookworm
     container_name: redis
     restart: always
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     volumes:
       - redis_data:/data
     networks:
@@ -42,9 +42,9 @@ services:
       timeout: 10s
       retries: 5
 
-  core-api-api:
+  core-api:
     build: .
-    container_name: core-api-api
+    container_name: core-api
     restart: always
     environment:
       POSTGRES_URL: postgresql://user:password@postgres:5432/mydatabase
