@@ -36,6 +36,8 @@ pub struct NewModuleRequest {
 struct NewModule {
     name: String,
     description: String,
+    created_at: NaiveDateTime,
+    updated_at: NaiveDateTime,
 }
 
 #[derive(Deserialize)]
@@ -50,7 +52,6 @@ pub struct ModifyModuleRequest {
 struct ModifyModule {
     name: String,
     description: String,
-    created_at: NaiveDateTime,
     updated_at: NaiveDateTime,
 }
 
@@ -144,6 +145,8 @@ pub async fn create_module(
     let create_module = NewModule {
         name: create_module_request.name.clone(),
         description: create_module_request.description.clone(),
+        created_at: chrono::Utc::now().naive_utc(),
+        updated_at: chrono::Utc::now().naive_utc(),
     };
 
     let count = diesel::insert_into(schema::modules::table)
@@ -176,7 +179,6 @@ pub async fn update_module(
     let update_module = ModifyModule {
         name: update_module_request.name.clone(),
         description: update_module_request.description.clone(),
-        created_at: chrono::Utc::now().naive_utc(),
         updated_at: chrono::Utc::now().naive_utc(),
     };
 
