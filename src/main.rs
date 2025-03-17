@@ -11,11 +11,26 @@ use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
 
 #[get("/health")]
 async fn health() -> impl Responder {
-    HttpResponse::Ok()
+    HttpResponse::Ok().finish()
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let binding_address = match std::env::var("BINDING_ADDRESS") {
+        Ok(address) => address,
+        Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "BINDING_ADDRESS is not set")),
+    };
+
+    let binding_port = match std::env::var("BINDING_PORT") {
+        Ok(port) => port,
+        Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "BINDING_PORT is not set")),
+    };
+
+    let binding_port = match binding_port.parse::<u16>() {
+        Ok(port) => port,
+        Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "Failed to parse BINDING_PORT")),
+    };
+
     let postgres_url = match std::env::var("POSTGRES_URL") {
         Ok(url) => url,
         Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "POSTGRES_URL is not set")),
@@ -58,7 +73,7 @@ async fn main() -> std::io::Result<()> {
             .configure(routes::api_instances::config)
     });
 
-    let server = if let Ok(server) = server.bind(("0.0.0.0", 3000)) {
+    let server = if let Ok(server) = server.bind((binding_address, binding_port)) {
         server
     } else {
         return Err(std::io::Error::new(std::io::ErrorKind::Other, "Failed to bind server"));

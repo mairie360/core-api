@@ -47,6 +47,8 @@ services:
     container_name: core-api
     restart: always
     environment:
+      BINDING_ADDRESS: "0.0.0.0"
+      BINDING_PORT: 3000
       POSTGRES_URL: postgresql://user:password@postgres:5432/mydatabase
       REDIS_URL: redis://redis:6379
     ports:

@@ -42,6 +42,3 @@ USER core-api
 # Set entrypoint
 ENTRYPOINT ["/usr/local/bin/core-api"]
 CMD []
-
-# Expose the port
-EXPOSE 3000
