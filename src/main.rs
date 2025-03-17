@@ -54,6 +54,8 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .service(health)
             .configure(routes::modules::config)
+            .configure(routes::web_instances::config)
+            .configure(routes::api_instances::config)
     });
 
     let server = if let Ok(server) = server.bind(("0.0.0.0", 3000)) {
