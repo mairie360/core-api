@@ -11,6 +11,7 @@ use crate::{postgres::Postgres, redis::Redis, schema};
 struct PartialModule {
     id: i32,
     name: String,
+    full_name: String,
     api_url: String,
     web_url: String,
 }
@@ -21,6 +22,7 @@ struct PartialModule {
 struct CompleteModule {
     id: i32,
     name: String,
+    full_name: String,
     description: String,
     api_url: String,
     web_url: String,
@@ -31,6 +33,7 @@ struct CompleteModule {
 #[derive(Deserialize)]
 pub struct NewModuleRequest {
     name: String,
+    full_name: String,
     description: String,
     api_url: String,
     web_url: String,
@@ -41,6 +44,7 @@ pub struct NewModuleRequest {
 #[diesel(table_name = schema::modules)]
 struct NewModule {
     name: String,
+    full_name: String,
     description: String,
     api_url: String,
     web_url: String,
@@ -51,6 +55,7 @@ struct NewModule {
 #[derive(Deserialize)]
 pub struct ModifyModuleRequest {
     name: String,
+    full_name: String,
     description: String,
     api_url: String,
     web_url: String,
@@ -61,6 +66,7 @@ pub struct ModifyModuleRequest {
 #[diesel(table_name = schema::modules)]
 struct ModifyModule {
     name: String,
+    full_name: String,
     description: String,
     api_url: String,
     web_url: String,
@@ -156,6 +162,7 @@ pub async fn create_module(
 
     let create_module = NewModule {
         name: create_module_request.name.clone(),
+        full_name: create_module_request.full_name.clone(),
         description: create_module_request.description.clone(),
         api_url: create_module_request.api_url.clone(),
         web_url: create_module_request.web_url.clone(),
@@ -192,6 +199,7 @@ pub async fn update_module(
 
     let update_module = ModifyModule {
         name: update_module_request.name.clone(),
+        full_name: update_module_request.full_name.clone(),
         description: update_module_request.description.clone(),
         api_url: update_module_request.api_url.clone(),
         web_url: update_module_request.web_url.clone(),
@@ -227,11 +235,7 @@ pub async fn delete_module(
 
     let count = diesel::delete(schema::modules::table)
         .filter(schema::modules::id.eq(delete_id.into_inner()))
-        .returning((
-            schema::modules::id,
-            schema::modules::name,
-            schema::modules::description,
-        ))
+        .returning(CompleteModule::as_select())
         .execute(&mut postgres_connection)
         .optional();
 
