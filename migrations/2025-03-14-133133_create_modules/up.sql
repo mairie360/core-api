@@ -7,6 +7,6 @@ CREATE TABLE
         description VARCHAR(256) NOT NULL,
         api_url VARCHAR(2048) NOT NULL,
         web_url VARCHAR(2048) NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+        created_at TIMESTAMP NOT NULL DEFAULT NOW (),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW ()
     );

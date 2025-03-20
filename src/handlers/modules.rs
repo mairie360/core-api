@@ -104,7 +104,7 @@ pub async fn get_module_by_id(
     search_id: web::Path<i32>,
 ) -> impl Responder {
     let mut postgres_connection = postgres.get_connection();
-    let mut __redis_connection = redis.get_connection();
+    let mut _redis_connection = redis.get_connection();
 
     let result = schema::modules::table
         .select(CompleteModule::as_select())
