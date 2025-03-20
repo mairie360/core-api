@@ -11,6 +11,8 @@ use crate::{postgres::Postgres, redis::Redis, schema};
 struct PartialModule {
     id: i32,
     name: String,
+    api_url: String,
+    web_url: String,
 }
 
 #[derive(Serialize, Selectable, Queryable)]
@@ -20,6 +22,8 @@ struct CompleteModule {
     id: i32,
     name: String,
     description: String,
+    api_url: String,
+    web_url: String,
     created_at: NaiveDateTime,
     updated_at: NaiveDateTime
 }
@@ -28,6 +32,8 @@ struct CompleteModule {
 pub struct NewModuleRequest {
     name: String,
     description: String,
+    api_url: String,
+    web_url: String,
 }
 
 #[derive(Insertable)]
@@ -36,6 +42,8 @@ pub struct NewModuleRequest {
 struct NewModule {
     name: String,
     description: String,
+    api_url: String,
+    web_url: String,
     created_at: NaiveDateTime,
     updated_at: NaiveDateTime,
 }
@@ -44,6 +52,8 @@ struct NewModule {
 pub struct ModifyModuleRequest {
     name: String,
     description: String,
+    api_url: String,
+    web_url: String,
 }
 
 #[derive(Serialize, AsChangeset)]
@@ -52,6 +62,8 @@ pub struct ModifyModuleRequest {
 struct ModifyModule {
     name: String,
     description: String,
+    api_url: String,
+    web_url: String,
     updated_at: NaiveDateTime,
 }
 
@@ -145,6 +157,8 @@ pub async fn create_module(
     let create_module = NewModule {
         name: create_module_request.name.clone(),
         description: create_module_request.description.clone(),
+        api_url: create_module_request.api_url.clone(),
+        web_url: create_module_request.web_url.clone(),
         created_at: chrono::Utc::now().naive_utc(),
         updated_at: chrono::Utc::now().naive_utc(),
     };
@@ -179,6 +193,8 @@ pub async fn update_module(
     let update_module = ModifyModule {
         name: update_module_request.name.clone(),
         description: update_module_request.description.clone(),
+        api_url: update_module_request.api_url.clone(),
+        web_url: update_module_request.web_url.clone(),
         updated_at: chrono::Utc::now().naive_utc(),
     };
 
